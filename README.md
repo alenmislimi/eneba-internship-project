@@ -1,6 +1,6 @@
 # Eneba Marketplace Assignment
 
-A compact digital games marketplace demo built for the Eneba internship assignment. The React/TypeScript storefront talks to a PHP REST API backed by SQLite. It uses seeded demo products, sellers, and activation keys; checkout is simulated and does not collect payment details.
+A compact digital games marketplace demo built for the Eneba internship assignment. The React/TypeScript storefront talks to a PHP REST API backed by SQLite locally and PostgreSQL on Render. It uses seeded demo products, sellers, and activation keys; checkout is simulated and does not collect payment details.
 
 GitHub repository: https://github.com/alenmislimi/eneba-internship-project
 
@@ -27,7 +27,7 @@ Create a demo account with any valid email and a password of at least six charac
 
 - `frontend/src/App.tsx` - storefront, product, account, cart, and order flows
 - `frontend/src/styles.css` - responsive Eneba-inspired dark storefront styles
-- `backend/index.php` - REST routes, SQLite schema, demo seed data, and session auth
+- `backend/index.php` - REST routes, SQLite/PostgreSQL schema, demo seed data, and session auth
 - `docs/PROJECT-PLAN.md` - requirements, architecture, tradeoffs, and delivery plan
 - `AI-CHAT-LOG.md` - conversation log for this project
 
@@ -37,6 +37,8 @@ Create a demo account with any valid email and a password of at least six charac
 
 Homepage shelves are queried independently from catalog data. Search supports partial names and a simple edit-distance fallback. Auth passwords are hashed; session cookies guard checkout and order history.
 
-## Before public deployment
+## Deploy on Render
 
-Set `VITE_API_URL` to the PHP API base URL and `FRONTEND_ORIGIN` to the frontend origin, persist SQLite outside an ephemeral filesystem or move to a managed database, and replace demo keys and simulated checkout with a payment-provider test flow. HTTPS enables secure cross-site session cookies. Do not use the included demo keys for real products.
+The repository includes a Render Blueprint (`render.yaml`) for a free static frontend, PHP Docker API, and free Postgres database. In Render, create a new Blueprint and select this GitHub repository. The API uses `DATABASE_URL` for Postgres; local development continues to use SQLite when that variable is unset.
+
+Render free web services spin down after inactivity, so the first request can be slow. The free Postgres database expires after 30 days; upgrade or export the data before then if the app needs to stay online. The included digital keys are demo values and must not be used for real products.
