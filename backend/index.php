@@ -11,13 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 session_set_cookie_params(['httponly'=>true,'secure'=>$isHttps,'samesite'=>$isHttps?'None':'Lax','path'=>'/']);
 session_start();
-$db = new PDO('sqlite:' . __DIR__ . '/data/marketplace.sqlite');
+$databaseUrl=getenv('DATABASE_URL');
+$driver=$databaseUrl?'pgsql':'sqlite';
+if($databaseUrl){
+  $parts=parse_url($databaseUrl);
+  if(!$parts||empty($parts['host'])||empty($parts['path']))throw new RuntimeException('DATABASE_URL is not a valid PostgreSQL connection URL.');
+  parse_str($parts['query']??'', $queryParams);
+  $dsn='pgsql:host='.$parts['host'].';port='.($parts['port']??5432).';dbname='.rawurldecode(ltrim($parts['path'],'/')).';sslmode='.($queryParams['sslmode']??'require');
+  $db=new PDO($dsn,rawurldecode($parts['user']??''),rawurldecode($parts['pass']??''));
+}else{
+  $db=new PDO('sqlite:' . __DIR__ . '/data/marketplace.sqlite');
+}
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$db->exec('PRAGMA foreign_keys = ON');
-$db->exec('CREATE TABLE IF NOT EXISTS products (id TEXT PRIMARY KEY, title TEXT NOT NULL, category TEXT NOT NULL, platform TEXT NOT NULL, region TEXT NOT NULL, image TEXT NOT NULL, description TEXT NOT NULL, rating REAL NOT NULL, badge TEXT)');
-$db->exec('CREATE TABLE IF NOT EXISTS offers (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id TEXT NOT NULL REFERENCES products(id), seller TEXT NOT NULL, price REAL NOT NULL, stock INTEGER NOT NULL, rating REAL NOT NULL, delivery TEXT NOT NULL, key_code TEXT NOT NULL)');
-$db->exec('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL)');
-$db->exec('CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id), offer_id INTEGER NOT NULL REFERENCES offers(id), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)');
+if($driver==='sqlite')$db->exec('PRAGMA foreign_keys = ON');
+$autoId=$driver==='pgsql'?'BIGSERIAL PRIMARY KEY':'INTEGER PRIMARY KEY AUTOINCREMENT';
+$realType=$driver==='pgsql'?'DOUBLE PRECISION':'REAL';
+$dateType=$driver==='pgsql'?'TIMESTAMPTZ':'TEXT';
+$db->exec('CREATE TABLE IF NOT EXISTS products (id TEXT PRIMARY KEY, title TEXT NOT NULL, category TEXT NOT NULL, platform TEXT NOT NULL, region TEXT NOT NULL, image TEXT NOT NULL, description TEXT NOT NULL, rating '.$realType.' NOT NULL, badge TEXT)');
+$db->exec('CREATE TABLE IF NOT EXISTS offers (id '.$autoId.', product_id TEXT NOT NULL REFERENCES products(id), seller TEXT NOT NULL, price '.$realType.' NOT NULL, stock INTEGER NOT NULL, rating '.$realType.' NOT NULL, delivery TEXT NOT NULL, key_code TEXT NOT NULL)');
+$db->exec('CREATE TABLE IF NOT EXISTS users (id '.$autoId.', name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL)');
+$db->exec('CREATE TABLE IF NOT EXISTS orders (id '.$autoId.', user_id INTEGER NOT NULL REFERENCES users(id), offer_id INTEGER NOT NULL REFERENCES offers(id), created_at '.$dateType.' NOT NULL DEFAULT CURRENT_TIMESTAMP)');
 
 if ((int)$db->query('SELECT COUNT(*) FROM products')->fetchColumn() === 0) {
   $products = [
@@ -44,8 +57,8 @@ if($path==='/api/health') respond(['status'=>'ok']);
 if($path==='/api/me') respond(['user'=>user()]);
 if($path==='/api/auth/register' && $method==='POST') {
   $b=body(); if(!filter_var($b['email']??'',FILTER_VALIDATE_EMAIL) || strlen($b['password']??'')<6) respond(['error'=>'Enter a valid email and a password of at least 6 characters.'],422);
-  try {$s=$db->prepare('INSERT INTO users(name,email,password) VALUES(?,?,?)');$s->execute([trim($b['name']??'Player'),strtolower($b['email']),password_hash($b['password'],PASSWORD_DEFAULT)]);} catch(Throwable) {respond(['error'=>'An account with that email already exists.'],409);}
-  $_SESSION['user']=['id'=>(int)$db->lastInsertId(),'name'=>trim($b['name']??'Player'),'email'=>strtolower($b['email'])]; respond(['user'=>user()],201);
+  try {$s=$db->prepare($driver==='pgsql'?'INSERT INTO users(name,email,password) VALUES(?,?,?) RETURNING id':'INSERT INTO users(name,email,password) VALUES(?,?,?)');$s->execute([trim($b['name']??'Player'),strtolower($b['email']),password_hash($b['password'],PASSWORD_DEFAULT)]);$id=$driver==='pgsql'?(int)$s->fetchColumn():(int)$db->lastInsertId();} catch(Throwable) {respond(['error'=>'An account with that email already exists.'],409);}
+  $_SESSION['user']=['id'=>$id,'name'=>trim($b['name']??'Player'),'email'=>strtolower($b['email'])]; respond(['user'=>user()],201);
 }
 if($path==='/api/auth/login' && $method==='POST') {$b=body();$s=$db->prepare('SELECT * FROM users WHERE email=?');$s->execute([strtolower($b['email']??'')]);$u=$s->fetch(PDO::FETCH_ASSOC);if(!$u||!password_verify($b['password']??'',$u['password']))respond(['error'=>'Email or password is incorrect.'],401);$_SESSION['user']=['id'=>(int)$u['id'],'name'=>$u['name'],'email'=>$u['email']];respond(['user'=>user()]);}
 if($path==='/api/auth/logout'&&$method==='POST'){session_destroy();respond(['ok'=>true]);}
