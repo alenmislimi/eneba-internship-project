@@ -2,6 +2,8 @@
 
 A compact digital games marketplace demo built for the Eneba internship assignment. The React/TypeScript storefront talks to a PHP REST API backed by SQLite. It uses seeded demo products, sellers, and activation keys; checkout is simulated and does not collect payment details.
 
+GitHub repository: https://github.com/alenmislimi/eneba-internship-project
+
 ## Run locally
 
 Requirements: Node.js 20+, PHP 8+ with PDO SQLite enabled.
