@@ -22,10 +22,10 @@ React SPA (Vite, TypeScript)
 PHP API (single front controller for this demo)
           | PDO
           v
-SQLite: products, offers, users, orders
+SQLite locally / PostgreSQL on Render: products, offers, users, orders
 ```
 
-`products` hold shared marketplace identity and activation metadata. Each `offers` row belongs to a product and carries seller, price, stock, rating, delivery, and a demo key. `users` store a hashed password. `orders` connect an authenticated buyer to a selected seller offer and timestamp. A real implementation would snapshot the purchased amount and key into an order item at purchase time, enforce stock, add migrations and input validation, and use a transaction/payment webhook workflow.
+`products` hold shared marketplace identity and activation metadata. Each `offers` row belongs to a product and carries seller, price, stock, rating, delivery, and a demo key. `users` store a hashed password. `orders` connect an authenticated buyer to a selected seller offer and timestamp. Local development defaults to SQLite; setting `DATABASE_URL` switches to PostgreSQL for Render. A real implementation would snapshot the purchased amount and key into an order item at purchase time, enforce stock, add migrations and input validation, and use a transaction/payment webhook workflow.
 
 ## Decisions and limits
 
