@@ -46,4 +46,4 @@ SQLite locally / PostgreSQL on Render: products, offers, users, orders
 6. Polish empty/error/loading states, document architecture, and review the demo flow.
 7. Deploy frontend/API with persistent data, prepare GitHub repository and public URL, and submit the complete chat log.
 
-The local project implements the first five milestones at demo depth. GitHub publication and hosted deployment need account/hosting access and should be completed as handoff steps once the app is reviewed.
+The project is published at https://github.com/alenmislimi/eneba-internship-project and deployed on Render. The static frontend, PHP API, and PostgreSQL database are live on free plans. The demo PostgreSQL instance expires December 24, 2026; export or upgrade it before expiry if the deployment needs to remain available.
