@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Pixel art voxel landscape with grassy hills and mountains">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#63c7ed"/><stop offset="1" stop-color="#b2f2f1"/></linearGradient>
+    <linearGradient id="far" x2="0" y2="1"><stop stop-color="#6ab9a0"/><stop offset="1" stop-color="#498d78"/></linearGradient>
+    <linearGradient id="near" x2="0" y2="1"><stop stop-color="#438e50"/><stop offset="1" stop-color="#245435"/></linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#sky)"/>
+  <rect x="145" y="112" width="88" height="26" fill="#fff" opacity=".88"/><rect x="118" y="138" width="145" height="22" fill="#fff" opacity=".88"/><rect x="885" y="86" width="80" height="25" fill="#fff" opacity=".82"/><rect x="854" y="111" width="142" height="23" fill="#fff" opacity=".82"/>
+  <rect x="858" y="178" width="106" height="106" fill="#ffe784" opacity=".86"/>
+  <path d="M0 409 145 275l77 72 133-167 115 120 120-177 155 166 111-107 118 111 91-91 135 154v364H0Z" fill="url(#far)"/>
+  <path d="m301 254 54-74 69 120-54-21-29 32Zm184-10 60-121 65 101-42-17-23 23Zm378 26 53-67 65 76-44-14-25 21Z" fill="#d8e9df" opacity=".9"/>
+  <path d="M0 482 126 393l92 48 151-109 117 95 112-102 105 93 121-112 119 108 102-75 155 113v268H0Z" fill="url(#near)"/>
+  <path d="m0 483 126-90 92 48 151-109 117 95 112-102 105 93 121-112 119 108 102-75 155 113v76H0Z" fill="#75a94d"/>
+  <path d="M0 576h155v144H0zm155-45h118v189H155zm118 20h145v169H273zm145-63h120v232H418zm120 26h160v206H538zm160-53h137v259H698zm137 35h128v224H835zm128-21h128v245H963zm128 58h109v187h-109z" fill="#3c7542"/>
+  <path d="M0 576h155v23H0zm155-45h118v23H155zm118 20h145v23H273zm145-63h120v23H418zm120 26h160v23H538zm160-53h137v23H698zm137 35h128v23H835zm128-21h128v23H963zm128 58h109v23h-109z" fill="#a2c95d"/>
+  <g fill="#244e37"><rect x="90" y="518" width="35" height="58"/><rect x="75" y="533" width="65" height="24"/><rect x="1040" y="471" width="35" height="81"/><rect x="1025" y="487" width="66" height="25"/></g>
+  <g fill="#79a85a"><rect x="88" y="529" width="40" height="18"/><rect x="1038" y="481" width="39" height="18"/></g>
+  <rect y="672" width="1200" height="48" fill="#17251e" opacity=".18"/>
+</svg>

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+backend/data/*.sqlite
+backend/data/*.sqlite-*
+.DS_Store
+Eneba Internship Assignment.pdf
