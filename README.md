@@ -37,8 +37,9 @@ Create a demo account with any valid email and a password of at least six charac
 
 Homepage shelves are queried independently from catalog data. Search supports partial names and a simple edit-distance fallback. Auth passwords are hashed; session cookies guard checkout and order history.
 
-## Deploy on Render
+## Live deployment
 
-The repository includes a Render Blueprint (`render.yaml`) for a free static frontend, PHP Docker API, and free Postgres database. In Render, create a new Blueprint and select this GitHub repository. The API uses `DATABASE_URL` for Postgres; local development continues to use SQLite when that variable is unset.
+- Storefront: https://eneba-marketplace-web.onrender.com
+- API health: https://eneba-marketplace-api-gkyk.onrender.com/api/health
 
-Render free web services spin down after inactivity, so the first request can be slow. The free Postgres database expires after 30 days; upgrade or export the data before then if the app needs to stay online. The included digital keys are demo values and must not be used for real products.
+The Render Blueprint (`render.yaml`) defines the static frontend, PHP Docker API, and Postgres database. Local development uses SQLite; setting `DATABASE_URL` switches the API to PostgreSQL. The free web services can spin down after inactivity, so the first request may take around a minute. The free database is set to expire on December 24, 2026. Export or upgrade it before then if the app needs to stay online. The included digital keys and payment form are demos; no real payment is collected.
